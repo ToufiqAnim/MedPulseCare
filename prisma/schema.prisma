@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// @map can be used to assign a different name to your columns names, for example if the column name for a table in your database is userLastName but you want to assign a different name (user_last_name) and access it with a different name in your generated PrismaClient you can use @map attribute for it.
+
+// model User {
+//   id        Int    @id @default(autoincrement())
+//   userLastName String @map("user_last_name")
+// }
+// @map does not rename the columns / fields in the database
+// @map does change the field names in the generated prisma client
+// On the other hand @@map is used to assign a different name to a model and not a particular field. So for example if a table name is UserDetails and you want to access it as user_details in the generated client you can use @@map attribute.
+
+// model UserDetails {
+//   id   Int    @id @default(autoincrement())
+//   name String
+
+//   @@map("users_details")
+// }
+
+//@map is used to modify column name and @@map is used for table name
+
+model Doctor {
+  id               String         @id @default(uuid()) // @id is used for primary key
+  fullName         String         @map("full_name")
+  email            String         @unique
+  phoneNumber      String         @unique @map("phone_number")
+  role             String         @default("doctor")
+  qualification    String
+  specializationId String         @map("specialization_id")
+  specialization   Specialization @relation(fields: [specializationId], references: [id])
+  password         String
+  isPassword       Boolean        @default(false) @map("is_password_reset")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@map("doctors")
+}
+
+model Specialization {
+  id          String   @id @default(uuid())
+  name        String
+  description String? // ? used for optional
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  Doctor      Doctor[]
+
+  @@map("specializations")
+}
