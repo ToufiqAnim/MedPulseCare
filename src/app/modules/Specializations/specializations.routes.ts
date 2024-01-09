@@ -7,5 +7,9 @@ router.post(
   '/create-specialization',
   specializationController.CreateSpecialization,
 )
+router.get('/', specializationController.GetSpecializations)
+router.get('/:id', specializationController.GetSpecialization)
+router.delete('/:id', specializationController.DeleteSpecialization)
+router.patch('/:id', specializationController.UpdateSpecialization)
 
 export const specializationRoutes = router
